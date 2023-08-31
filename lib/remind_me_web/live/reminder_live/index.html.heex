@@ -1,0 +1,47 @@
+<.header>
+  Listing Reminder
+  <:actions>
+   <%= if assigns[:current_user] do %>
+    <.link navigate={~p"/reminder/new"}>
+      <.button>New Reminder</.button>
+    </.link>
+    <% end %>
+  </:actions>
+</.header>
+
+<.table
+  id="reminder"
+  rows={@streams.reminder_collection}
+  row_click={fn {_id, reminder} -> JS.navigate(~p"/reminder/#{reminder}") end}
+>
+  <:col :let={{_id, reminder}} label="Title"><%= reminder.title %></:col>
+  <:col :let={{_id, reminder}} label="Content"><%= reminder.content %></:col>
+  <:col :let={{_id, reminder}} label="Due Date"><%= reminder.remind_date %></:col>
+  <:action :let={{_id, reminder}}>
+    <div class="sr-only">
+      <.link navigate={~p"/reminder/#{reminder}"}>Show</.link>
+    </div>
+    <.link navigate={~p"/reminder/#{reminder}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, reminder}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: reminder.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+
+<.modal :if={@live_action in [:new, :edit]} id="reminder-modal" show on_cancel={JS.patch(~p"/reminder")}>
+  <.live_component
+    module={RemindMeWeb.ReminderLive.FormComponent}
+    id={@reminder.id || :new}
+    title={@page_title}
+    action={@live_action}
+    reminder={@reminder}
+    patch={~p"/reminder"}
+    current_user={@current_user}
+  />
+</.modal>
