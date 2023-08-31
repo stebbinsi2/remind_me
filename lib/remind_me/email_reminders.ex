@@ -9,7 +9,7 @@ defmodule RemindMe.EmailReminders do
     subscribers = RemindMe.Reminders.subscriber_emails()
 
     for subscriber <- subscribers do
-      RemindMe.Mailer.deliver(build(subscribers, messages))
+      RemindMe.Mailer.deliver(build(subscriber, messages))
     end
   end
 
