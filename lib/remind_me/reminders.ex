@@ -23,10 +23,11 @@ defmodule RemindMe.Reminders do
     |> Repo.all()
   end
 
-  def remind_date_messages(reminder, user) do
+  def todays_reminders do
+    todays_date = Date.utc_today()
+
     from(r in Reminder,
-      where: r.remind_date == ^reminder.remind_date,
-      where: r.user_id == ^user.id,
+      where: r.remind_date == ^todays_date,
       where: r.subscribed == true,
       order_by: [asc: r.title]
     )
@@ -53,6 +54,8 @@ defmodule RemindMe.Reminders do
 
   """
   def get_reminder!(id), do: Repo.get!(Reminder, id)
+
+  def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
   Creates a reminder.
