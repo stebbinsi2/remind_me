@@ -4,7 +4,7 @@ defmodule RemindMe.Workers.ReminderEmail do
 
   @impl true
   def perform(_params) do
-    RemindMe.EmailReminders.send_to_subscribers()
+    RemindMe.EmailReminders.send_subscribed_reminders_to_users()
 
     :ok
   end

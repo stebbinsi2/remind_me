@@ -6,7 +6,7 @@ defmodule RemindMe.EmailReminders do
   @sender_name "RemindMe"
   @sender_email "info@remindme.com"
 
-  def send_to_subscribers do
+  def send_subscribed_reminders_to_users do
     todays_reminders = Reminders.todays_reminders()
 
     Enum.group_by(todays_reminders, & &1.user_id)
@@ -26,13 +26,14 @@ defmodule RemindMe.EmailReminders do
     #{Enum.map(reminders, &render_reminders/1)}
     """)
     |> text_body("""
-    Summary Report
-    #{reminders |> Enum.map(& &1.content) |> Enum.join("\n")}
+    Summary Report:
+    #{reminders |> Enum.map(& ["#{&1.title}: #{&1.content}"]) |> Enum.join("\n")}
     """)
   end
 
   defp render_reminders(reminders) do
     """
+    <p>#{reminders.title}:</p>
     <p>#{reminders.content}</p>
     """
   end
