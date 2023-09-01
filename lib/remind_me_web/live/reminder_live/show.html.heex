@@ -16,7 +16,12 @@
 
 <.back navigate={~p"/reminder"}>Back to reminder</.back>
 
-<.modal :if={@live_action == :edit} id="reminder-modal" show on_cancel={JS.patch(~p"/reminder/#{@reminder}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="reminder-modal"
+  show
+  on_cancel={JS.patch(~p"/reminder/#{@reminder}")}
+>
   <.live_component
     module={RemindMeWeb.ReminderLive.FormComponent}
     id={@reminder.id}
