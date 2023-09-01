@@ -2,6 +2,7 @@ defmodule RemindMeWeb.ReminderLive.FormComponent do
   use RemindMeWeb, :live_component
 
   alias RemindMe.Reminders
+  alias RemindMe.Workers
 
   @impl true
   def render(assigns) do
@@ -24,7 +25,7 @@ defmodule RemindMeWeb.ReminderLive.FormComponent do
         <.input field={@form[:remind_date]} type="date" label="Due Date" />
         <.input field={@form[:subscribed]} type="checkbox" label="Receive email Reminders" />
         <:actions>
-        <.input field={@form[:user_id]} type="hidden" value={@current_user.id} />
+          <.input field={@form[:user_id]} type="hidden" value={@current_user.id} />
           <.button phx-disable-with="Saving...">Save Reminder</.button>
         </:actions>
       </.simple_form>
@@ -75,6 +76,7 @@ defmodule RemindMeWeb.ReminderLive.FormComponent do
     case Reminders.create_reminder(reminder_params) do
       {:ok, reminder} ->
         notify_parent({:saved, reminder})
+        Workers.ReminderEmail.new(reminder, schedule_at: reminder.remind_date) |> Oban.insert()
 
         {:noreply,
          socket
