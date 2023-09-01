@@ -12,7 +12,10 @@ config :remind_me,
 
 config :remind_me, Oban,
   repo: RemindMe.Repo,
-  plugins: [Oban.Plugins.Pruner],
+  plugins: [
+    Oban.Plugins.Pruner,
+    {Oban.Plugins.Cron, crontab: [{"@daily", RemindMe.Workers.ReminderEmail}]}
+  ],
   queues: [default: 10]
 
 # Configures the endpoint
